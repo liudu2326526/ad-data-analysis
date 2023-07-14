@@ -1,0 +1,5 @@
+# 建议 python
+esdk-obs-python==3.22.2
+pymysql==0.10.1
+psycopg2-binary==2.8.6
+requests==2.27.1
