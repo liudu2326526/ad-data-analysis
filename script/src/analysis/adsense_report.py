@@ -5,7 +5,6 @@ from oauth2client import file
 from google.oauth2 import service_account
 from googleapiclient.http import build_http
 from googleapiclient import discovery
-from pandas_gbq import gbq
 from config.conf import conf
 from util import date_util
 from util import bigquery_util
@@ -22,8 +21,6 @@ accounts = conf['ACCOUNTS']
 dimension_dic = [
   'DATE',
   'COUNTRY_NAME',
-  # 'AD_UNIT_NAME',
-  # 'AD_UNIT_ID',
   'AD_FORMAT_NAME',
   'AD_FORMAT_CODE'
 ]
@@ -66,26 +63,15 @@ def run_report(target_day=date_util.today()):
       account=accounts,
       metrics=metric_dic,
       dimensions=dimension_dic,
-      # dateRange='LAST_7_DAYS',
       currencyCode='USD',
-      # dateRange='CUSTOM',
       endDate_day=day,
       endDate_month=month,
       endDate_year=year,
       startDate_day=day,
       startDate_month=month,
       startDate_year=year,
-      # startDate='2023-07-14',
-      # endDate='2023-07-14'
-      # dateRange = {
-      #   'start_date':'2023-07-10',
-      #   'end_date':'2023-07-11'
-      # }
-
   ).execute()
 
-  # for h in result['headers']:
-  #   print(h)
   df = pd.DataFrame(columns=dimension_dic + metric_dic)
 
   for r in result['rows']:
@@ -102,13 +88,6 @@ where DATE = '{date}'
   """.format(date=target_day))
 
   bigquery_util.df_to_bigquery(df, 'data_import.adsense_data')
-
-
-# df.to_csv('adsense_output.csv', index=False)
-
-# gbq.to_gbq(df, 'data_import.adsense_data', project_id='maximal-park-391912',
-#            credentials=CREDENTIALS, if_exists='append')
-
 
 if __name__ == '__main__':
   run_report()

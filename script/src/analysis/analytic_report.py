@@ -1,4 +1,3 @@
-from google.auth import exceptions
 import pandas as pd
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
@@ -90,7 +89,4 @@ where DATE = '{date}'
 
 
 if __name__ == '__main__':
-  # d = date_util.today()
-  #
-  # print(date_util.get_year_month_day(d))
   run_report('2023-07-12')
