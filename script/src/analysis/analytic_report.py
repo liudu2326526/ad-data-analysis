@@ -94,8 +94,8 @@ where DATE = '{date}'
 if __name__ == '__main__':
   args = sys.argv
   today = date_util.today()
-  if len(args) > 0:
-    for i in range(int(args[0])):
+  if len(args) > 1:
+    for i in range(int(args[1])):
       run_report(date_util.someday_from_day(today, i))
   else:
     run_report()
