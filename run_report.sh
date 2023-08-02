@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#0 1 * * * /bin/bash /home/ec2-user/ad-data-analysis/run_report.sh 3
+#0 1,9 * * * /bin/bash /home/ec2-user/ad-data-analysis/run_report.sh 3
 #0 * * * * /bin/bash /home/ec2-user/ad-data-analysis/run_report.sh
 
 # 获取脚本的相对路径
