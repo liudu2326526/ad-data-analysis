@@ -87,10 +87,10 @@ def run_report(target_day=date_util.today()):
       values.append(i['metrics'][m])
     df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
 
-    bigquery_util.execute_gbq_dml_sql("""
-  delete from `maximal-park-391912.data_import.tiktok_data_hourly`
-  where stat_time_hour like '{date}%'
-    """.format(date=target_day))
+  bigquery_util.execute_gbq_dml_sql("""
+delete from `maximal-park-391912.data_import.tiktok_data_hourly`
+where stat_time_hour like '{date}%'
+  """.format(date=target_day))
 
   bigquery_util.df_to_bigquery(df, 'data_import.tiktok_data_hourly')
 
