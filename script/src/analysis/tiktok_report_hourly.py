@@ -89,7 +89,7 @@ def run_report(target_day=date_util.today()):
 
     bigquery_util.execute_gbq_dml_sql("""
   delete from `maximal-park-391912.data_import.tiktok_data_hourly`
-  where stat_time_day like '{date}%'
+  where stat_time_hour like '{date}%'
     """.format(date=target_day))
 
   bigquery_util.df_to_bigquery(df, 'data_import.tiktok_data_hourly')
