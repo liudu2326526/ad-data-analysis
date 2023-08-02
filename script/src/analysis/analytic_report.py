@@ -28,6 +28,11 @@ metric_dic = [
   'publisherAdImpressions',
   'totalAdRevenue'
 ]
+data_type = {
+  'publisherAdClicks': int,
+  'publisherAdImpressions': int,
+  'totalAdRevenue': float,
+}
 
 # 设置服务帐号密钥文件的路径
 SERVICE_ACCOUNT_KEY_FILE = conf['GOOGLE_SERVICE_ACCOUNT_KEY_FILE']
@@ -82,6 +87,8 @@ def run_report(target_day=date_util.today()):
       values.append(metric.value)
     df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
 
+  for k in data_type:
+    df[k] = df[k].astype(data_type[k])
   print(df)
 
   bigquery_util.execute_gbq_dml_sql("""
