@@ -34,6 +34,13 @@ metric_dic = [
   'CLICKS',
   'ESTIMATED_EARNINGS',
 ]
+data_type = {
+  'AD_REQUESTS': int,
+  'MATCHED_AD_REQUESTS': int,
+  'IMPRESSIONS': int,
+  'CLICKS': int,
+  'ESTIMATED_EARNINGS': float,
+}
 
 
 def get_adsense_service(client_secrets, credential_cache):
@@ -84,6 +91,8 @@ def run_report(target_day=date_util.today()):
       values.append(v['value'])
     df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
 
+  for k in data_type:
+    df[k] = df[k].astype(data_type[k])
   print(df)
 
   bigquery_util.execute_gbq_dml_sql("""

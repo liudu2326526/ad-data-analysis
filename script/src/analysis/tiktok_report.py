@@ -14,6 +14,17 @@ from retrying import retry
 ACCESS_TOKEN = conf['TIKTOK_ACCESS_TOKEN']
 PATH = "/open_api/v1.3/report/integrated/get/"
 
+dimension_dic = [
+  "stat_time_day",
+  "country_code",
+  "campaign_id"
+]
+metric_dic = [
+  "spend"
+]
+data_type = {
+  'spend': float,
+}
 
 def build_url(path, query=""):
   # type: (str, str) -> str
@@ -44,17 +55,6 @@ def get(json_str):
   }
   rsp = requests.get(url, headers=headers)
   return rsp.json()
-
-
-dimension_dic = [
-  "stat_time_day",
-  "country_code",
-  "campaign_id"
-]
-metric_dic = [
-  "spend"
-]
-
 
 @retry(wait_fixed=60000, stop_max_attempt_number=3)
 def run_report(target_day=date_util.today()):
@@ -88,6 +88,9 @@ def run_report(target_day=date_util.today()):
       values.append(i['metrics'][m])
     df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
 
+  for k in data_type:
+    df[k] = df[k].astype(data_type[k])
+  print(df)
 
   bigquery_util.execute_gbq_dml_sql("""
 delete from `maximal-park-391912.data_import.tiktok_data_daily`
