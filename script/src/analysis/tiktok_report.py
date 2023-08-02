@@ -9,6 +9,7 @@ from six.moves.urllib.parse import urlencode, urlunparse  # noqa
 from util import date_util
 from util import bigquery_util
 from config.conf import conf
+from retrying import retry
 
 ACCESS_TOKEN = conf['TIKTOK_ACCESS_TOKEN']
 PATH = "/open_api/v1.3/report/integrated/get/"
@@ -55,6 +56,7 @@ metric_dic = [
 ]
 
 
+@retry(wait_fixed=60000, stop_max_attempt_number=3)
 def run_report(target_day=date_util.today()):
   print("run {} data".format(target_day))
   metrics = json.dumps(metric_dic)

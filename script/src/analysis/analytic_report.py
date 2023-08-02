@@ -13,6 +13,7 @@ from google.analytics.data_v1beta.types import (
 from config.conf import conf
 from util import date_util
 from util import bigquery_util
+from retrying import retry
 
 dimension_dic = [
   'date',
@@ -47,7 +48,7 @@ def authenticate():
     credentials.refresh(Request())
   return credentials
 
-
+@retry(wait_fixed=60000, stop_max_attempt_number=3)
 def run_report(target_day=date_util.today()):
   print("run {} data".format(target_day))
   # 进行身份验证

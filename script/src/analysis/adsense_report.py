@@ -10,6 +10,7 @@ from googleapiclient import discovery
 from config.conf import conf
 from util import date_util
 from util import bigquery_util
+from retrying import retry
 
 # 设置服务帐号密钥文件的路径
 SERVICE_ACCOUNT_KEY_FILE = conf['SERVICE_ACCOUNT_KEY_FILE']
@@ -56,7 +57,7 @@ def get_default_adsense_service():
   credential_cache = SERVICE_ACCOUNT_KEY_CACHE
   return get_adsense_service(client_secrets, credential_cache)
 
-
+@retry(wait_fixed=60000, stop_max_attempt_number=3)
 def run_report(target_day=date_util.today()):
   print("run {} data".format(target_day))
   year, month, day = date_util.get_year_month_day(target_day)

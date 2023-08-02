@@ -9,6 +9,7 @@ from six.moves.urllib.parse import urlencode, urlunparse  # noqa
 from util import date_util
 from util import bigquery_util
 from config.conf import conf
+from retrying import retry
 
 ACCESS_TOKEN = conf['TIKTOK_ACCESS_TOKEN']
 PATH = "/open_api/v1.3/report/integrated/get/"
@@ -54,6 +55,7 @@ metric_dic = [
 ]
 
 
+@retry(wait_fixed=60000, stop_max_attempt_number=3)
 def run_report(target_day=date_util.today()):
   print("run {} data".format(target_day))
   metrics = json.dumps(metric_dic)
@@ -85,10 +87,10 @@ def run_report(target_day=date_util.today()):
       values.append(i['metrics'][m])
     df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
 
-  #   bigquery_util.execute_gbq_dml_sql("""
-  # delete from `maximal-park-391912.data_import.tiktok_data_hourly`
-  # where stat_time_day like '{date}%'
-  #   """.format(date=target_day))
+    bigquery_util.execute_gbq_dml_sql("""
+  delete from `maximal-park-391912.data_import.tiktok_data_hourly`
+  where stat_time_day like '{date}%'
+    """.format(date=target_day))
 
   bigquery_util.df_to_bigquery(df, 'data_import.tiktok_data_hourly')
 
