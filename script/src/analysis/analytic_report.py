@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
@@ -47,6 +49,7 @@ def authenticate():
 
 
 def run_report(target_day=date_util.today()):
+  print("run {} data".format(target_day))
   # 进行身份验证
   credentials = authenticate()
 
@@ -81,12 +84,18 @@ def run_report(target_day=date_util.today()):
   print(df)
 
   bigquery_util.execute_gbq_dml_sql("""
-delete from `maximal-park-391912.data_import.analytic_data`
+delete from `maximal-park-391912.data_import.analytic_data_daily`
 where DATE = '{date}'
   """.format(date=date_util.chuange_format(target_day)))
 
-  bigquery_util.df_to_bigquery(df, 'data_import.analytic_data')
+  bigquery_util.df_to_bigquery(df, 'data_import.analytic_data_daily')
 
 
 if __name__ == '__main__':
-  run_report('2023-07-12')
+  args = sys.argv
+  today = date_util.today()
+  if len(args) > 0:
+    for i in range(int(args[0])):
+      run_report(date_util.someday_from_day(today, i))
+  else:
+    run_report()

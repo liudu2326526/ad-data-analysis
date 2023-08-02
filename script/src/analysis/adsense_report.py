@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 from oauth2client import client
 from oauth2client import tools
@@ -56,6 +58,7 @@ def get_default_adsense_service():
 
 
 def run_report(target_day=date_util.today()):
+  print("run {} data".format(target_day))
   year, month, day = date_util.get_year_month_day(target_day)
   service = get_default_adsense_service()
 
@@ -83,11 +86,17 @@ def run_report(target_day=date_util.today()):
   print(df)
 
   bigquery_util.execute_gbq_dml_sql("""
-delete from `maximal-park-391912.data_import.adsense_data`
+delete from `maximal-park-391912.data_import.adsense_data_daily`
 where DATE = '{date}'
   """.format(date=target_day))
 
-  bigquery_util.df_to_bigquery(df, 'data_import.adsense_data')
+  bigquery_util.df_to_bigquery(df, 'data_import.adsense_data_daily')
 
 if __name__ == '__main__':
-  run_report()
+  args = sys.argv
+  today = date_util.today()
+  if len(args) > 0:
+    for i in range(int(args[0])):
+      run_report(date_util.someday_from_day(today, i))
+  else:
+    run_report()
