@@ -20,11 +20,20 @@ dimension_dic = [
   "campaign_id"
 ]
 metric_dic = [
+  "impressions",
+  "clicks",
+  "reach",
+  "conversion",
   "spend"
 ]
 data_type = {
+  "impressions": int,
+  "clicks": int,
+  "reach": int,
+  "conversion": int,
   'spend': float,
 }
+
 
 def build_url(path, query=""):
   # type: (str, str) -> str
@@ -55,6 +64,7 @@ def get(json_str):
   }
   rsp = requests.get(url, headers=headers)
   return rsp.json()
+
 
 @retry(wait_fixed=60000, stop_max_attempt_number=3)
 def run_report(target_day=date_util.today()):

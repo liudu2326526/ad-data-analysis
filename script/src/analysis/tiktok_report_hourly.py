@@ -19,9 +19,17 @@ dimension_dic = [
   "campaign_id"
 ]
 metric_dic = [
+  "impressions",
+  "clicks",
+  "reach",
+  "conversion",
   "spend"
 ]
 data_type = {
+  "impressions": int,
+  "clicks": int,
+  "reach": int,
+  "conversion": int,
   'spend': float,
 }
 
