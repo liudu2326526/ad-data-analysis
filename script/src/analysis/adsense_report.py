@@ -96,11 +96,11 @@ def run_report(target_day=date_util.today()):
   print(df)
 
   bigquery_util.execute_gbq_dml_sql("""
-delete from `maximal-park-391912.data_import.adsense_data_daily`
+delete from `maximal-park-391912.analytics_354562983.adsense_data_daily`
 where DATE = '{date}'
   """.format(date=target_day))
 
-  bigquery_util.df_to_bigquery(df, 'data_import.adsense_data_daily')
+  bigquery_util.df_to_bigquery(df, 'analytics_354562983.adsense_data_daily')
 
 if __name__ == '__main__':
   args = sys.argv

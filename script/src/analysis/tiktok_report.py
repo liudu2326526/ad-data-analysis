@@ -72,7 +72,7 @@ def run_report(target_day=date_util.today()):
   metrics = json.dumps(metric_dic)
   data_level = "AUCTION_CAMPAIGN"
   end_date = target_day
-  page_size = 200
+  page_size = 1000
   start_date = target_day
   advertiser_id = conf['TIKTOK_ADVERTISER_ID']
   service_type = "AUCTION"
@@ -103,13 +103,11 @@ def run_report(target_day=date_util.today()):
   print(df)
 
   bigquery_util.execute_gbq_dml_sql("""
-delete from `maximal-park-391912.data_import.tiktok_data_daily`
+delete from `maximal-park-391912.analytics_354562983.tiktok_data_daily`
 where stat_time_day like '{date}%'
   """.format(date=target_day))
 
-  bigquery_util.df_to_bigquery(df, 'data_import.tiktok_data_daily')
-
-
+  bigquery_util.df_to_bigquery(df, 'analytics_354562983.tiktok_data_daily')
 
 if __name__ == '__main__':
   args = sys.argv
