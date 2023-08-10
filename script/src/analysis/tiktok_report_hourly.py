@@ -73,29 +73,27 @@ def run_report(target_day=date_util.today()):
   end_date = target_day
   page_size = 1000
   start_date = target_day
-  advertiser_id = conf['TIKTOK_ADVERTISER_ID']
   service_type = "AUCTION"
   report_type = "BASIC"
   page = 1
   dimensions = json.dumps(dimension_dic)
 
-  # Args in JSON format
-  my_args = "{\"metrics\": %s, \"data_level\": \"%s\", \"end_date\": \"%s\",\"advertiser_id\": \"%s\", \"page_size\": \"%s\", \"start_date\": \"%s\", \"service_type\": \"%s\", \"report_type\": \"%s\", \"page\": \"%s\", \"dimensions\": %s}" % (
-    metrics, data_level, end_date, advertiser_id, page_size,
-    start_date, service_type,
-    report_type, page, dimensions)
-
   df = pd.DataFrame(columns=dimension_dic + metric_dic)
 
-  json_data = get(my_args)
-
-  for i in json_data['data']['list']:
-    values = []
-    for d in dimension_dic:
-      values.append(i['dimensions'][d])
-    for m in metric_dic:
-      values.append(i['metrics'][m])
-    df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
+  for advertiser_id in conf['TIKTOK_ADVERTISER_ID']:
+    # Args in JSON format
+    my_args = "{\"metrics\": %s, \"data_level\": \"%s\", \"end_date\": \"%s\",\"advertiser_id\": \"%s\", \"page_size\": \"%s\", \"start_date\": \"%s\", \"service_type\": \"%s\", \"report_type\": \"%s\", \"page\": \"%s\", \"dimensions\": %s}" % (
+      metrics, data_level, end_date, advertiser_id, page_size,
+      start_date, service_type,
+      report_type, page, dimensions)
+    json_data = get(my_args)
+    for i in json_data['data']['list']:
+      values = []
+      for d in dimension_dic:
+        values.append(i['dimensions'][d])
+      for m in metric_dic:
+        values.append(i['metrics'][m])
+      df = df.append(pd.Series(values, index=df.columns), ignore_index=True)
 
   for k in data_type:
     df[k] = df[k].astype(data_type[k])
